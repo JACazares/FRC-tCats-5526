@@ -64,11 +64,11 @@ public class Robot extends IterativeRobot {
 		boolean toggleLauncher = true;
 		
 		//Speed of Different motors
-		static final double speedRobot = -.75, turnRobot = -.6;
+		static final double speedRobot = -.85, turnRobot = -.7;
 		static final double speedNinja = .4;
 		static final double speedBrazo = .7;
-		static final double speedPickUp = .6;
-		static final double speedLauncher = .9;
+		static final double speedPickUp = .7;
+		static final double speedLauncher = 1;
 		
 	//----------------------------CODE--------------------------
 	
@@ -181,5 +181,6 @@ public class Robot extends IterativeRobot {
 				}
 				
 			}
+			
 		}
 }
