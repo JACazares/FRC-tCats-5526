@@ -72,14 +72,14 @@ public class Robot extends IterativeRobot {
 		
 	//----------------------------CODE--------------------------
 	
-	  @Override
+		@Override
 		public void robotInit() {
 			chooser.addDefault("Default Auto", defaultAuto);
 			chooser.addObject("My Auto", customAuto);
 			SmartDashboard.putData("Auto choices", chooser);
 			//Initialize Joysticks
 			xboxControl = new XboxController(portXboxControl);
-	
+
 			//Initialize Controllers
 			LancerBot = new RobotDrive(portLeftMotor, portRightMotor);
 			upperLauncher = new Victor(portUpperLauncher);
@@ -87,10 +87,10 @@ public class Robot extends IterativeRobot {
 			pickUp = new Spark(portPickUp);
 			ninja = new Victor(portNinja);
 			brazo = new Victor(portBrazo);
-			
+
 		}
 	
-    @Override
+		@Override
 		public void autonomousInit() {
 			autoSelected = chooser.getSelected();
 			// autoSelected = SmartDashboard.getString("Auto Selector",
@@ -98,7 +98,7 @@ public class Robot extends IterativeRobot {
 			System.out.println("Auto selected: " + autoSelected);
 		}
 	
-	  @Override
+		@Override
 		public void autonomousPeriodic() {
 			switch (autoSelected) {
 			case customAuto:
@@ -111,7 +111,7 @@ public class Robot extends IterativeRobot {
 			}
 		}
 	
-	  @Override
+		@Override
 		public void teleopPeriodic() {
 			LancerBot.setSafetyEnabled(true);
 			LancerBot.stopMotor();
@@ -153,10 +153,13 @@ public class Robot extends IterativeRobot {
 				//Control the Pick Up routine by applying pressure to button X
 				if(xboxControl.getXButton()) {
 					pickUp.set(-speedPickUp);
+					lowerLauncher.set(-speedLauncher);
 					while(xboxControl.getXButton())
 						continue;
 					pickUp.set(0);
+					lowerLauncher.set(0);
 				}
+				
 				//Control the Pick Up (Inv) routine by applying pressure to button X
 				if(xboxControl.getStickButton()) {
 					lowerLauncher.set(-speedLauncher);
@@ -179,5 +182,4 @@ public class Robot extends IterativeRobot {
 				
 			}
 		}
-
 }
