@@ -59,13 +59,6 @@ public class Robot extends SampleRobot {
 		static final int portElevator = 4;
 
 	//---------------------------VARIABLES---------------------- 
-	
-		//Direction of Different motors
-		boolean toggleBrazo = true;
-		boolean toggleNinja = true;
-		boolean togglePickUp = true;
-		boolean togglePickUpInv = true;
-		boolean toggleLauncher = true;
 		
 		//Speed of Different motors
 		static final double speedRobot = .4, turnRobot = .7;
