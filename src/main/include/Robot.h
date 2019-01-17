@@ -15,6 +15,7 @@
 #include <frc/SampleRobot.h>
 #include <frc/drive/DifferentialDrive.h>
 #include <frc/smartdashboard/SendableChooser.h>
+#include "ctre/Phoenix.h"
 
 class Robot : public frc::SampleRobot {
  public:
@@ -31,30 +32,32 @@ class Robot : public frc::SampleRobot {
 
 private:
   //Initialize ports
-  int portUpLeft = 0, portLoLeft = 1, portUpRight = 2, portLoRight = 3;
-  int portUpElevator = 4, portLoElevator = 5, portUpClimber = 6, portLoClimber = 7;
+  int portUpLeft = 0, portLoLeft = 1, portMiLeft = 2, portUpRight = 3, portLoRight = 4, portMiRight = 5;
   int portLeftStick = 0, portRightStick = 1;
 
   //Initialize Robot Controllers
-  frc::PWMVictorSPX m_upperLeftMotor { portUpLeft };
-  frc::PWMVictorSPX m_lowerLeftMotor { portLoLeft };
-  frc::PWMVictorSPX m_upperRightMotor { portUpRight };
-  frc::PWMVictorSPX m_lowerRightMotor { portLoRight };
+  WPI_TalonSRX m_upperLeftMotor { portUpLeft };
+  WPI_TalonSRX m_lowerLeftMotor { portLoLeft };
+  WPI_TalonSRX m_middleLeftMotor { portMiLeft };
 
-  frc::SpeedControllerGroup m_leftMotor { m_upperLeftMotor, m_lowerLeftMotor };
-  frc::SpeedControllerGroup m_rightMotor { m_upperRightMotor, m_lowerRightMotor };
+  WPI_TalonSRX m_upperRightMotor { portUpRight };
+  WPI_TalonSRX m_lowerRightMotor { portLoRight };
+  WPI_TalonSRX m_middleRightMotor { portMiRight };
+
+  frc::SpeedControllerGroup m_leftMotor { m_upperLeftMotor, m_middleLeftMotor, m_lowerLeftMotor };
+  frc::SpeedControllerGroup m_rightMotor { m_upperRightMotor, m_middleRightMotor, m_lowerRightMotor };
 
   //Initialize Elevator Controllers
-  frc::PWMVictorSPX m_upperElevator { portUpElevator };
-  frc::PWMVictorSPX m_lowerElevator { portLoElevator };
+  /*WPI_TalonSRX m_upperElevator { portUpElevator };
+  WPI_TalonSRX m_lowerElevator { portLoElevator };
 
-  frc::SpeedControllerGroup m_elevator { m_upperElevator, m_lowerElevator };
+  frc::SpeedControllerGroup m_elevator { m_upperElevator, m_lowerElevator };*/
 
   //Initialize Climber Controllers
-  frc::PWMVictorSPX m_upperClimber { portUpClimber };
-  frc::PWMVictorSPX m_lowerClimber { portLoClimber };
+  /*WPI_TalonSRX m_upperClimber { portUpClimber };
+  WPI_TalonSRX m_lowerClimber { portLoClimber };
 
-  frc::SpeedControllerGroup m_climber { m_upperClimber, m_lowerClimber };
+  frc::SpeedControllerGroup m_climber { m_upperClimber, m_lowerClimber };*/
 
   //Initialize ROBOT_DRIVE
   frc::DifferentialDrive m_robotDrive { m_leftMotor, m_rightMotor };

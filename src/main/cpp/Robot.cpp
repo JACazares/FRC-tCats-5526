@@ -53,22 +53,14 @@ void Robot::OperatorControl()
   {
     m_robotDrive.ArcadeDrive ( m_leftStick.GetY() * speedRobot, m_leftStick.GetX() * speedTurn );
     
-    if ( m_leftStick.GetRawButton(1) )
-    {
-      while ( IsOperatorControl() && IsEnabled() && m_leftStick.GetRawButton(1) )
-      {
-        m_elevator.Set ( 1 );
-        m_robotDrive.ArcadeDrive ( m_leftStick.GetY() * speedRobot, m_leftStick.GetX() * speedTurn );
-      }
-    }
-
-    if ( m_leftStick.GetRawButton(2) )
+    /*if ( m_leftStick.GetRawButton(2) )
     {
       while ( IsOperatorControl() && IsEnabled() && m_leftStick.GetRawButton(2) )
       {
         m_elevator.Set ( -1 );
         m_robotDrive.ArcadeDrive ( m_leftStick.GetY() * speedRobot, m_leftStick.GetX() * speedTurn );
       }
+      m_elevator.Set ( 0 );
     }
 
     if ( m_leftStick.GetRawButton(3) )
@@ -78,6 +70,7 @@ void Robot::OperatorControl()
         m_climber.Set ( .3 );
         m_robotDrive.ArcadeDrive ( m_leftStick.GetY() * speedRobot, m_leftStick.GetX() * speedTurn );
       }
+      m_climber.Set ( 0 );
     }
 
     if ( m_leftStick.GetRawButton(4) )
@@ -87,7 +80,8 @@ void Robot::OperatorControl()
         m_climber.Set ( -.3 );
         m_robotDrive.ArcadeDrive ( m_leftStick.GetY() * speedRobot, m_leftStick.GetX() * speedTurn );
       }
-    }
+      m_climber.Set ( 0 );
+    }*/
     
     frc::Wait(0.005);
   }
