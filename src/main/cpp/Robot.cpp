@@ -10,83 +10,92 @@
 #include <iostream>
 
 #include <frc/Timer.h>
-#include <frc/smartdashboard/SmartDashboard.h>
 
-Robot::Robot()
-{
+Robot::Robot() {
+  // Note SmartDashboard is not initialized here, wait until RobotInit() to make
+  // SmartDashboard calls
   m_robotDrive.SetExpiration(0.1);
 }
 
-void Robot::RobotInit()
-{
+
+void Robot::RobotInit() {
+  enc.Reset(); 
+  enc.SetDistancePerPulse(1); 
+  enc2.Reset(); 
+  enc.SetDistancePerPulse(1); 
+  gyro.Reset(); 
+  gyro.Calibrate(); 
 }
 
-void Robot::Autonomous()
-{
-  int autoSelected = 0;
-  m_robotDrive.SetSafetyEnabled ( false );
-
-  switch ( autoSelected )
-  {
-    case 1:
-      std::cout << "Autonomous 1 selected\n";
-      Autonomous1();
-      break;
-    case 2:
-      std::cout << "Autonomous 2 selected\n";
-      Autonomous2();
-      break;
-    case 3:
-      std::cout << "Autonomous 3 selected\n";
-      Autonomous3();
-      break;
-    default:
-      std::cout << "Autonomous code not selected\n";
-      break;
-  }
+void Robot::Autonomous() {
+  
 }
 
-void Robot::OperatorControl()
-{
-  m_robotDrive.SetSafetyEnabled(true);
-  while ( IsOperatorControl() && IsEnabled() )
-  {
-    m_robotDrive.ArcadeDrive ( m_leftStick.GetY() * speedRobot, m_leftStick.GetX() * speedTurn );
+/**
+ * Runs the motors with arcade steering.
+ */
+void Robot::OperatorControl() {
+  //m_robotDrive.SetSafetyEnabled(true);
+  while (IsOperatorControl() && IsEnabled()) {
+    // Drive with arcade style (use right stick)
+    m_robotDrive.ArcadeDrive(m_stick.GetY()*ROBOTSPEED, m_stick.GetX()*TURNSPEED);
     
-    /*if ( m_leftStick.GetRawButton(2) )
-    {
-      while ( IsOperatorControl() && IsEnabled() && m_leftStick.GetRawButton(2) )
-      {
-        m_elevator.Set ( -1 );
-        m_robotDrive.ArcadeDrive ( m_leftStick.GetY() * speedRobot, m_leftStick.GetX() * speedTurn );
-      }
-      m_elevator.Set ( 0 );
+    //Elevator Control
+    if(m_stick.GetRawButton(1)){
+      m_elevator.Set(ELEVATORSPEED); 
+    }
+    else if(m_stick.GetRawButton(2)){
+      m_elevator.Set(-ELEVATORSPEED); 
+    }
+    else {
+      m_elevator.Set(0.09); 
     }
 
-    if ( m_leftStick.GetRawButton(3) )
-    {
-      while ( IsOperatorControl() && IsEnabled() && m_leftStick.GetRawButton(3) )
-      {
-        m_climber.Set ( .3 );
-        m_robotDrive.ArcadeDrive ( m_leftStick.GetY() * speedRobot, m_leftStick.GetX() * speedTurn );
-      }
-      m_climber.Set ( 0 );
+    //Control de Tenaza
+    if(m_stick.GetRawButton(3))
+      m_brazoAngulo.Set(ARMSPEED); 
+    else if(m_stick.GetRawButton(4))
+      m_brazoAngulo.Set(-ARMSPEED);
+    else
+      m_brazoAngulo.Set(0); 
+    
+    //Launch
+    if(m_stick.GetRawButton(5))
+      m_brazoRuedas.Set(GRABSPEED); 
+    else if(m_stick.GetRawButton(6))
+      m_brazoRuedas.Set(-GRABSPEED); 
+    else
+      m_brazoRuedas.Set(0); 
+    
+    //dataGet
+    if(m_rightStick.GetRawButton(1)){
+      AimX();  
     }
 
-    if ( m_leftStick.GetRawButton(4) )
-    {
-      while ( IsOperatorControl() && IsEnabled() && m_leftStick.GetRawButton(4) )
-      {
-        m_climber.Set ( -.3 );
-        m_robotDrive.ArcadeDrive ( m_leftStick.GetY() * speedRobot, m_leftStick.GetX() * speedTurn );
-      }
-      m_climber.Set ( 0 );
-    }*/
-    
+    if(m_rightStick.GetRawButton(2)){
+      GetSensors(); 
+    }
+
+    if(m_rightStick.GetRawButton(5)){
+      getMeasures(); 
+    }
+
+    if(m_rightStick.GetRawButton(3)){
+      m_backActuator.Set(-0.5);
+    }
+    else if(m_rightStick.GetRawButton(4)){
+      m_backActuator.Set(0.5);
+    }
+    else {
+      m_backActuator.Set(0);
+    }
     frc::Wait(0.005);
-  }
+  } 
 }
 
+/**
+ * Runs during test mode
+ */
 void Robot::Test() {}
 
 #ifndef RUNNING_FRC_TESTS

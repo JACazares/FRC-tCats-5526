@@ -10,62 +10,80 @@
 #include <string>
 
 #include <frc/Joystick.h>
-#include <frc/SpeedControllerGroup.h>
-#include <frc/PWMVictorSPX.h>
 #include <frc/SampleRobot.h>
+
 #include <frc/drive/DifferentialDrive.h>
-#include <frc/smartdashboard/SendableChooser.h>
+
+#include <frc/Encoder.h>
+
 #include "ctre/Phoenix.h"
+#include <frc/SpeedControllerGroup.h>
+
+#include <frc/smartdashboard/Smartdashboard.h>
+#include "networktables/NetworkTable.h"
+#include "networktables/NetworkTableInstance.h"
+
+#include <ADXRS450_Gyro.h>
 
 class Robot : public frc::SampleRobot {
  public:
   Robot();
-
   void RobotInit() override;
   void Autonomous() override;
   void OperatorControl() override;
-  void Test() override;
+  void Test() override;    
 
-  void Autonomous1();
-  void Autonomous2();
-  void Autonomous3();
+  void OneMeterMove(); 
+  void getMeasures();
+  void GetSensors(); 
+  void AimX(); 
 
-private:
-  //Initialize ports
-  int portUpLeft = 0, portLoLeft = 1, portMiLeft = 2, portUpRight = 3, portLoRight = 4, portMiRight = 5;
-  int portLeftStick = 0, portRightStick = 1;
+ private:
+  //Constants
+  const double ELEVATORSPEED = 0.6;  
+  const double ROBOTSPEED = 1; 
+  const double TURNSPEED = 1; 
+  const double ARMSPEED = 1; 
+  const double GRABSPEED = 1;
+  const double MINTURN = 2; 
+  const int ONEMETER = 100;  
+  
+  //Motor Objects
+  WPI_TalonSRX m_leftMidMotor{7};
+  WPI_TalonSRX m_leftUpMotor{1};
+  WPI_TalonSRX m_leftDownMotor{2};
+  WPI_TalonSRX m_rightMidMotor{3};
+  WPI_TalonSRX m_rightUpMotor{4};
+  WPI_TalonSRX m_rightDownMotor{5}; 
 
-  //Initialize Robot Controllers
-  WPI_TalonSRX m_upperLeftMotor { portUpLeft };
-  WPI_TalonSRX m_lowerLeftMotor { portLoLeft };
-  WPI_TalonSRX m_middleLeftMotor { portMiLeft };
+  WPI_TalonSRX m_rightActuator{0}; 
+  WPI_TalonSRX m_leftActuator{6}; 
+  WPI_TalonSRX m_backActuator{9};
+  
+  //Elevator motor objects
+  WPI_TalonSRX m_elevator{10}; 
+  WPI_TalonSRX m_brazoAngulo{8}; 
+  WPI_TalonSRX m_brazoRuedas{11};
 
-  WPI_TalonSRX m_upperRightMotor { portUpRight };
-  WPI_TalonSRX m_lowerRightMotor { portLoRight };
-  WPI_TalonSRX m_middleRightMotor { portMiRight };
+  //Speed Controllers
+  frc::SpeedControllerGroup m_rightMotor {m_rightMidMotor, m_rightUpMotor, m_rightDownMotor}; 
+  frc::SpeedControllerGroup m_leftMotor {m_leftMidMotor, m_leftUpMotor, m_rightDownMotor}; 
+  frc::SpeedControllerGroup m_frontActuators{m_rightActuator, m_leftActuator}; 
 
-  frc::SpeedControllerGroup m_leftMotor { m_upperLeftMotor, m_middleLeftMotor, m_lowerLeftMotor };
-  frc::SpeedControllerGroup m_rightMotor { m_upperRightMotor, m_middleRightMotor, m_lowerRightMotor };
+  //Robot Drive Object
+  frc::DifferentialDrive m_robotDrive{m_leftMotor, m_rightMotor};
+  
+  //Joysticks
+  frc::Joystick m_stick{0};
+  frc::Joystick m_rightStick{1}; 
 
-  //Initialize Elevator Controllers
-  /*WPI_TalonSRX m_upperElevator { portUpElevator };
-  WPI_TalonSRX m_lowerElevator { portLoElevator };
+  //Encoder Object
+  frc::Encoder enc {0, 1, false, frc::CounterBase::EncodingType::k4X}; 
+  frc::Encoder enc2 {2, 3, false, frc::CounterBase::EncodingType::k4X};  
+  
+  //Vision Objects
+  std::shared_ptr<NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable("limelight"); 
 
-  frc::SpeedControllerGroup m_elevator { m_upperElevator, m_lowerElevator };*/
-
-  //Initialize Climber Controllers
-  /*WPI_TalonSRX m_upperClimber { portUpClimber };
-  WPI_TalonSRX m_lowerClimber { portLoClimber };
-
-  frc::SpeedControllerGroup m_climber { m_upperClimber, m_lowerClimber };*/
-
-  //Initialize ROBOT_DRIVE
-  frc::DifferentialDrive m_robotDrive { m_leftMotor, m_rightMotor };
-
-  //Initialize Joysticks
-  frc::Joystick m_leftStick { portLeftStick };
-  frc::Joystick m_rightStick { portRightStick };
-
-  //Initialize robot constants;
-  const double speedRobot = -0.9, speedTurn = 0.7;
+  //Gyro
+  frc::ADXRS450_Gyro gyro {}; 
 };
