@@ -37,6 +37,9 @@ class Robot : public frc::SampleRobot {
   void getMeasures();
   void GetSensors(); 
   void AimX(); 
+  void Autonomous1();
+  void Autonomous2();
+  void Autonomous3();
 
  private:
   //Constants
