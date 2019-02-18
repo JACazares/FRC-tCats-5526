@@ -10,6 +10,7 @@
 #include <iostream>
 
 #include <frc/Timer.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 Robot::Robot() {
   // Note SmartDashboard is not initialized here, wait until RobotInit() to make
@@ -17,80 +18,61 @@ Robot::Robot() {
   m_robotDrive.SetExpiration(0.1);
 }
 
-
 void Robot::RobotInit() {
-  enc.Reset(); 
-  enc.SetDistancePerPulse(1); 
-  enc2.Reset(); 
-  enc.SetDistancePerPulse(1); 
-  gyro.Reset(); 
-  gyro.Calibrate(); 
+  m_encElevator.Reset();
+  m_encElevator.SetDistancePerPulse(1);
+  m_encBrazo.Reset();
+  m_encBrazo.SetDistancePerPulse(1);
+  m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
+  m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
+  frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 }
 
+/**
+ * This autonomous (along with the chooser code above) shows how to select
+ * between different autonomous modes using the dashboard. The sendable chooser
+ * code works with the Java SmartDashboard. If you prefer the LabVIEW Dashboard,
+ * remove all of the chooser code and uncomment the GetString line to get the
+ * auto name from the text box below the Gyro.
+ *
+ * You can add additional auto modes by adding additional comparisons to the
+ * if-else structure below with additional strings. If using the SendableChooser
+ * make sure to add them to the chooser code above as well.
+ */
 void Robot::Autonomous() {
-  
 }
 
 /**
  * Runs the motors with arcade steering.
  */
 void Robot::OperatorControl() {
-  //m_robotDrive.SetSafetyEnabled(true);
+  m_robotDrive.SetSafetyEnabled(true);
   while (IsOperatorControl() && IsEnabled()) {
     // Drive with arcade style (use right stick)
-    m_robotDrive.ArcadeDrive(m_stick.GetY()*ROBOTSPEED, m_stick.GetX()*TURNSPEED);
-    
-    //Elevator Control
-    if(m_stick.GetRawButton(1)){
-      m_elevator.Set(ELEVATORSPEED); 
+    m_robotDrive.ArcadeDrive(-m_stick.GetY()*MOVESPEED, m_stick.GetX()*TURNSPEED); 
+    //Elevator  
+    if(control.GetRawButton(1)){
+      RaiseLow(); 
     }
-    else if(m_stick.GetRawButton(2)){
-      m_elevator.Set(-ELEVATORSPEED); 
+    else if(control.GetRawButton(3)){
+      RaiseMid(); 
     }
-    else {
-      m_elevator.Set(0.09); 
+    else if(control.GetRawButton(4)){
+      RaiseMax(); 
+    }
+    else if(control.GetRawButton(2)){
+      ResetElevator(); 
     }
 
-    //Control de Tenaza
     if(m_stick.GetRawButton(3))
-      m_brazoAngulo.Set(ARMSPEED); 
-    else if(m_stick.GetRawButton(4))
-      m_brazoAngulo.Set(-ARMSPEED);
-    else
-      m_brazoAngulo.Set(0); 
-    
-    //Launch
-    if(m_stick.GetRawButton(5))
-      m_brazoRuedas.Set(GRABSPEED); 
-    else if(m_stick.GetRawButton(6))
-      m_brazoRuedas.Set(-GRABSPEED); 
-    else
-      m_brazoRuedas.Set(0); 
-    
-    //dataGet
-    if(m_rightStick.GetRawButton(1)){
-      AimX();  
-    }
-
-    if(m_rightStick.GetRawButton(2)){
-      GetSensors(); 
-    }
-
-    if(m_rightStick.GetRawButton(5)){
-      getMeasures(); 
-    }
-
-    if(m_rightStick.GetRawButton(3)){
-      m_backActuator.Set(-0.5);
-    }
-    else if(m_rightStick.GetRawButton(4)){
-      m_backActuator.Set(0.5);
-    }
-    else {
-      m_backActuator.Set(0);
-    }
+      AimBot(); 
+    //Brazo Angulo
+    ControlArm(); 
+    //shooter
+    ControlLauncher(); 
+    // The motors will be updated every 5ms
     frc::Wait(0.005);
-  } 
+  }
 }
 
 /**

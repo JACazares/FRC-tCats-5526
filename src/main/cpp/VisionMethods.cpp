@@ -1,7 +1,7 @@
 #include "Robot.h"
 #include <iostream>
 
-void Robot::getMeasures(){
+void Robot::GetMeasures(){
     double targetX = table->GetNumber("tx", 0.0);
     double targetY = table->GetNumber("ty", 0.0);
     double targetArea = table->GetNumber("ta", 0.0);
@@ -13,17 +13,25 @@ void Robot::getMeasures(){
     std::cout<<"targetS: "<<targetSkew<<"\n"; 
 }
 
-void Robot::AimX(){
+void Robot::AimBot(){
     double targetX = table->GetNumber("tx", 0.0);
+    double targetArea = table->GetNumber("ta", 0.0); 
+    double targetY = table ->GetNumber("ty", 0.0);
     int direction;   
-    while((targetX > 1 || targetX < -1) && m_rightStick.GetRawButton(1)){
-        targetX = table->GetNumber("tx", 0.0); 
-        if(targetX > 0)
+    while(m_stick.GetRawButton(3) && targetY < 13){
+        targetX = table->GetNumber("tx", 0.0);
+        targetY = table->GetNumber("ty", 0.0);
+        std::cout<<targetY<<"\n"; 
+        if(targetX > 2){
             direction = 1; 
-        else
+        }
+        else if(targetX < -2){
             direction = -1; 
-        m_robotDrive.ArcadeDrive(0, direction*0.5);
-        std::cout<<"targetX: "<<targetX<<"\n"; 
+        }
+        else
+            direction = 0; 
+        m_robotDrive.ArcadeDrive(0.5, direction *0.5);
         frc::Wait(0.005); 
     }
+    m_robotDrive.ArcadeDrive(0, 0); 
 }
